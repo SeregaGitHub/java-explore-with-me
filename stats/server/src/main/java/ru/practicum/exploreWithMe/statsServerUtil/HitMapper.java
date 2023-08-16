@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class HitMapper {
     private final ModelMapper modelMapper;
-    private final static String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public HitMapper() {
         this.modelMapper = new ModelMapper();

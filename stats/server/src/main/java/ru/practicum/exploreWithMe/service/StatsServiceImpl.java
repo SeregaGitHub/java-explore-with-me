@@ -20,7 +20,7 @@ import java.util.List;
 public class StatsServiceImpl implements StatsService {
     private final StatsRepository statsRepository;
     private final HitMapper hitMapper;
-    private final static String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     @Override
     public HitDto addHit(HitDto hitDto) {

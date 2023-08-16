@@ -33,7 +33,7 @@ public interface StatsRepository extends JpaRepository<Hit, Integer> {
                    "from Hit as h " +
                    "where h.requestTime between ?1 and ?2 " +
                    "and h.uri in (?3) " +
-                   "group by h.app, h.uri "+
+                   "group by h.app, h.uri " +
                    "order by COUNT(h.ip) desc")
     List<StatsDto> getNotUniqueStats(LocalDateTime start, LocalDateTime end, List<String> uris);
 
@@ -41,7 +41,7 @@ public interface StatsRepository extends JpaRepository<Hit, Integer> {
                    "StatsDto(h.app, h.uri, COUNT(h.ip) as i) " +
                    "from Hit as h " +
                    "where h.requestTime between ?1 and ?2 " +
-                   "group by h.app, h.uri "+
+                   "group by h.app, h.uri " +
                    "order by COUNT(h.ip) desc")
     List<StatsDto> getNotUniqueStatsEmptyList(LocalDateTime parse, LocalDateTime parse1, List<String> actualList);
 }
