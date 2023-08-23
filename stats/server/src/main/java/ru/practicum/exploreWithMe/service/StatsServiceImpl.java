@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.exploreWithMe.dto.HitDto;
 import ru.practicum.exploreWithMe.dto.StatsDto;
+import ru.practicum.exploreWithMe.exception.IncorrectTimeException;
 import ru.practicum.exploreWithMe.model.Hit;
 import ru.practicum.exploreWithMe.statsServerUtil.HitMapper;
 import ru.practicum.exploreWithMe.storage.StatsRepository;
@@ -40,20 +41,22 @@ public class StatsServiceImpl implements StatsService {
             actualList = uris;
         }
 
+        LocalDateTime startTime = LocalDateTime.parse(start, DateTimeFormatter.ofPattern(DATE_FORMAT));
+        LocalDateTime endTime = LocalDateTime.parse(end, DateTimeFormatter.ofPattern(DATE_FORMAT));
+        if (startTime.isAfter(endTime)) {
+            throw new IncorrectTimeException("Start and end time is not correct");
+        }
+
         log.info("Stats from {} to {} was viewed", start, end);
 
         if (unique && !emptyList) {
-            return statsRepository.getUniqueStats(LocalDateTime.parse(start, DateTimeFormatter.ofPattern(DATE_FORMAT)),
-                    LocalDateTime.parse(end, DateTimeFormatter.ofPattern(DATE_FORMAT)), actualList);
+            return statsRepository.getUniqueStats(startTime, endTime, actualList);
         } else if (unique && emptyList) {
-            return statsRepository.getUniqueStatsEmptyList(LocalDateTime.parse(start, DateTimeFormatter.ofPattern(DATE_FORMAT)),
-                    LocalDateTime.parse(end, DateTimeFormatter.ofPattern(DATE_FORMAT)), actualList);
+            return statsRepository.getUniqueStatsEmptyList(startTime, endTime, actualList);
         } else if (!unique && !emptyList) {
-            return statsRepository.getNotUniqueStats(LocalDateTime.parse(start, DateTimeFormatter.ofPattern(DATE_FORMAT)),
-                    LocalDateTime.parse(end, DateTimeFormatter.ofPattern(DATE_FORMAT)), actualList);
+            return statsRepository.getNotUniqueStats(startTime, endTime, actualList);
         } else {
-            return statsRepository.getNotUniqueStatsEmptyList(LocalDateTime.parse(start, DateTimeFormatter.ofPattern(DATE_FORMAT)),
-                    LocalDateTime.parse(end, DateTimeFormatter.ofPattern(DATE_FORMAT)), actualList);
+            return statsRepository.getNotUniqueStatsEmptyList(startTime, endTime, actualList);
         }
     }
 }
