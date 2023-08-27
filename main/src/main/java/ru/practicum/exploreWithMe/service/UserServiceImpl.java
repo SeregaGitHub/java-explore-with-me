@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getUsers(List<Integer> ids, Integer size, Integer from) {
-        int actualFrom = from == 0 ? 0 : from -1;
+        int actualFrom = from == 0 ? 0 : from - 1;
 
         List<Integer> actualIds = ids == null ? new ArrayList<>() : ids;
 

@@ -55,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getAllCategories(Integer from, Integer size) {
-        int actualFrom = from == 0 ? 0 : from -1;
+        int actualFrom = from == 0 ? 0 : from - 1;
         return categoryRepository.findAll().stream().skip(actualFrom).limit(size).collect(Collectors.toList());
     }
 
