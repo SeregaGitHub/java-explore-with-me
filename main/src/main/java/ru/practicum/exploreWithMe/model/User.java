@@ -1,17 +1,15 @@
 package ru.practicum.exploreWithMe.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
 public class User {
     @Id
@@ -22,4 +20,14 @@ public class User {
     private String name;
     @Column(name = "user_email", length = 255, nullable = false)
     private String email;
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

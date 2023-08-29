@@ -1,19 +1,17 @@
 package ru.practicum.exploreWithMe.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "participation_request")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
 public class ParticipationRequest {
     @Id
@@ -30,4 +28,14 @@ public class ParticipationRequest {
     private User requester;
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

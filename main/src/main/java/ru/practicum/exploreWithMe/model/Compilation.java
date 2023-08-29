@@ -1,18 +1,16 @@
 package ru.practicum.exploreWithMe.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "compilation")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
 public class Compilation {
     @Id
@@ -28,4 +26,14 @@ public class Compilation {
             joinColumns = {@JoinColumn(name = "compilation_id")},
             inverseJoinColumns = {@JoinColumn(name = "event_id")})
     private Set<Event> events;
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

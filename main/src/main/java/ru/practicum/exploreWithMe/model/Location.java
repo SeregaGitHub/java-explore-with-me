@@ -1,17 +1,15 @@
 package ru.practicum.exploreWithMe.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "location")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
 public class Location {
     @Id
@@ -22,4 +20,14 @@ public class Location {
     private float lat;
     @Column(name = "lon", nullable = false)
     private float lon;
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

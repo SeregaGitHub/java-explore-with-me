@@ -8,10 +8,11 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "event")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Event {
@@ -52,4 +53,14 @@ public class Event {
     Integer views;
     @Transient
     Integer confirmedRequests;
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

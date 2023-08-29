@@ -1,17 +1,15 @@
 package ru.practicum.exploreWithMe.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "category")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
 public class Category {
     @Id
@@ -20,4 +18,14 @@ public class Category {
     private Integer id;
     @Column(name = "category_name", nullable = false)
     private String name;
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }
