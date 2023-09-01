@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.practicum.exploreWithMe.dto.comment.CommentDto;
+import ru.practicum.exploreWithMe.dto.comment.NewCommentDto;
+import ru.practicum.exploreWithMe.dto.comment.UpdateCommentDto;
 import ru.practicum.exploreWithMe.dto.event.*;
 import ru.practicum.exploreWithMe.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.exploreWithMe.dto.request.EventRequestStatusUpdateResult;
@@ -11,15 +14,13 @@ import ru.practicum.exploreWithMe.dto.request.ParticipationRequestDto;
 import ru.practicum.exploreWithMe.exception.BadRequestException;
 import ru.practicum.exploreWithMe.exception.ConflictException;
 import ru.practicum.exploreWithMe.exception.NotFoundException;
-import ru.practicum.exploreWithMe.model.Event;
-import ru.practicum.exploreWithMe.model.ParticipationRequest;
-import ru.practicum.exploreWithMe.model.State;
-import ru.practicum.exploreWithMe.model.Status;
+import ru.practicum.exploreWithMe.model.*;
 import ru.practicum.exploreWithMe.storage.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.exploreWithMe.util.EnumsUtil;
 import ru.practicum.exploreWithMe.util.UriBuilder;
+import ru.practicum.exploreWithMe.util.mapper.CommentMapper;
 import ru.practicum.exploreWithMe.util.mapper.EventMapper;
 import ru.practicum.exploreWithMe.util.mapper.ParticipationRequestMapper;
 
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +44,7 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public List<ParticipationRequestDto> getRequestByUser(Integer userId, Integer eventId) {
@@ -315,5 +318,82 @@ public class EventServiceImpl implements EventService {
                             .collect(Collectors.toList()))
                     .build();
         }
+    }
+
+    @Override
+    @Transactional
+    public CommentDto addComment(Integer eventId, Integer userId, NewCommentDto newCommentDto) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException("User was not found."));
+        Event event = eventRepository.findById(eventId).orElseThrow(
+                () -> new NotFoundException("Event was not found"));
+        if (!event.getState().equals(State.PUBLISHED)) {
+            throw new ConflictException("You can not comment on an unpublished event");
+        }
+        Comment comment = commentRepository.save(CommentMapper.toComment(newCommentDto, user, event));
+        return CommentMapper.toCommentDto(comment);
+    }
+
+    @Override
+    @Transactional
+    public CommentDto updateCommentByOwner(UpdateCommentDto updateCommentDto, Integer userId, Integer commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new NotFoundException("Comment was not found"));
+        if (!Objects.equals(comment.getAuthor().getId(), userId)) {
+            throw new NotFoundException("Only author can update the comment");
+        }
+        comment.setText(updateCommentDto.getText());
+        return CommentMapper.toCommentDto(commentRepository.save(comment));
+    }
+
+    @Override
+    public void removeCommentByOwner(Integer commentId, Integer userId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new NotFoundException("Comment with Id=" + commentId + " was not found"));
+        if (Objects.equals(comment.getAuthor().getId(), userId)) {
+            commentRepository.deleteById(commentId);
+        } else {
+            throw new BadRequestException("You can not delete this comment");
+        }
+    }
+
+    @Override
+    public CommentDto getComment(Integer commentId) {
+        return CommentMapper.toCommentDto(commentRepository.findById(commentId).orElseThrow(
+                () -> new NotFoundException("Comment was not found")));
+    }
+
+    @Override
+    @Transactional
+    public List<CommentDto> getAllUserComments(Integer userId, Integer from, Integer size) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException("User with Id=" + userId + " was not found"));
+        return commentRepository.findAllByAuthor(user, PageRequest.of(from / size, size))
+                .stream()
+                .map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void removeCommentByAdmin(Integer commentId) {
+        if (commentRepository.existsById(commentId)) {
+            commentRepository.deleteById(commentId);
+        } else {
+            throw new NotFoundException("Comment with Id=" + commentId + " was not found");
+        }
+    }
+
+    @Override
+    @Transactional
+    public List<CommentDto> getAllEventComments(Integer eventId, Integer from, Integer size) {
+        Event event = eventRepository.findById(eventId).orElseThrow(
+                () -> new NotFoundException("Event with Id=" + eventId + " was not found"));
+        if (!event.getState().equals(State.PUBLISHED)) {
+            throw new ConflictException("Event state is not - PUBLISHED");
+        }
+        return commentRepository.findAllByEvent(event, PageRequest.of(from / size, size))
+                .stream()
+                .map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList());
     }
 }
