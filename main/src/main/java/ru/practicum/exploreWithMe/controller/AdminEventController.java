@@ -2,8 +2,10 @@ package ru.practicum.exploreWithMe.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.exploreWithMe.dto.comment.CommentDto;
 import ru.practicum.exploreWithMe.dto.event.EventForUpdateDto;
 import ru.practicum.exploreWithMe.dto.event.EventFullDto;
 import ru.practicum.exploreWithMe.service.EventService;
@@ -35,5 +37,23 @@ public class AdminEventController {
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(@PathVariable Integer eventId, @Valid @RequestBody EventForUpdateDto eventForUpdateDto) {
         return eventService.updateEvent(eventForUpdateDto, eventId);
+    }
+
+    @GetMapping("/comments/{commentId}")
+    public CommentDto getComment(@PathVariable Integer commentId) {
+        return eventService.getComment(commentId);
+    }
+
+    @GetMapping("/comments/users/{userId}")
+    public List<CommentDto> getAllUserComments(@PathVariable Integer userId,
+                                               @RequestParam(defaultValue = "0") Integer from,
+                                               @RequestParam(defaultValue = "10") Integer size) {
+        return eventService.getAllUserComments(userId, from, size);
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeCommentByAdmin(@PathVariable Integer commentId) {
+        eventService.removeCommentByAdmin(commentId);
     }
 }

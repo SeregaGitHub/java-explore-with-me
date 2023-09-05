@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.exploreWithMe.dto.comment.CommentDto;
+import ru.practicum.exploreWithMe.dto.comment.NewCommentDto;
+import ru.practicum.exploreWithMe.dto.comment.UpdateCommentDto;
 import ru.practicum.exploreWithMe.dto.event.EventDto;
 import ru.practicum.exploreWithMe.dto.event.EventForAddDto;
 import ru.practicum.exploreWithMe.dto.event.EventForUserUpdateDto;
@@ -56,5 +59,25 @@ public class PrivateEventController {
     public EventRequestStatusUpdateResult updateRequestsByUser(@PathVariable Integer userId, @PathVariable Integer eventId,
                                                          @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
         return eventService.updateRequestsByUser(userId, eventId, eventRequestStatusUpdateRequest);
+    }
+
+    @PostMapping("/{eventId}/comments")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto addComment(@Valid @RequestBody NewCommentDto newCommentDto,
+                                 @PathVariable Integer userId, @PathVariable Integer eventId) {
+        return eventService.addComment(eventId, userId, newCommentDto);
+    }
+
+    @PatchMapping("/comments/{commentId}")
+    @ResponseStatus(HttpStatus.OK)
+    public CommentDto updateComment(@Valid @RequestBody UpdateCommentDto updateCommentDto,
+                                    @PathVariable Integer userId, @PathVariable Integer commentId) {
+        return eventService.updateCommentByOwner(updateCommentDto, userId, commentId);
+    }
+
+    @DeleteMapping("/comments/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeCommentByOwner(@PathVariable Integer userId, @PathVariable Integer commentId) {
+        eventService.removeCommentByOwner(commentId, userId);
     }
 }

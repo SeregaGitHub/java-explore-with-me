@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.exploreWithMe.dto.comment.CommentDto;
 import ru.practicum.exploreWithMe.dto.event.EventDto;
 import ru.practicum.exploreWithMe.dto.event.EventFullDto;
 import ru.practicum.exploreWithMe.service.EventService;
@@ -40,5 +41,12 @@ public class PublicEventController {
     @GetMapping("/{id}")
     public EventFullDto getEvent(@PathVariable Integer id, HttpServletRequest httpServletRequest) {
         return eventService.getEvent(id, httpServletRequest);
+    }
+
+    @GetMapping("/comments/{eventId}")
+    public List<CommentDto> getAllEventComments(@PathVariable Integer eventId,
+                                                @RequestParam(defaultValue = "0") Integer from,
+                                                @RequestParam(defaultValue = "10") Integer size) {
+        return eventService.getAllEventComments(eventId, from, size);
     }
 }

@@ -1,5 +1,8 @@
 package ru.practicum.exploreWithMe.service;
 
+import ru.practicum.exploreWithMe.dto.comment.CommentDto;
+import ru.practicum.exploreWithMe.dto.comment.NewCommentDto;
+import ru.practicum.exploreWithMe.dto.comment.UpdateCommentDto;
 import ru.practicum.exploreWithMe.dto.event.*;
 import ru.practicum.exploreWithMe.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.exploreWithMe.dto.request.EventRequestStatusUpdateResult;
@@ -33,4 +36,18 @@ public interface EventService {
 
     EventRequestStatusUpdateResult updateRequestsByUser(Integer userId, Integer eventId,
                                                         EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest);
+
+    CommentDto addComment(Integer eventId, Integer userId, NewCommentDto newCommentDto);
+
+    CommentDto updateCommentByOwner(UpdateCommentDto comment, Integer userId, Integer commentId);
+
+    void removeCommentByOwner(Integer commentId, Integer userId);
+
+    List<CommentDto> getAllEventComments(Integer eventId, Integer from, Integer size);
+
+    CommentDto getComment(Integer commentId);
+
+    List<CommentDto> getAllUserComments(Integer userId, Integer from, Integer size);
+
+    void removeCommentByAdmin(Integer commentId);
 }
